@@ -1,3 +1,5 @@
+from django.forms import ModelForm
+
 from django.forms.models import (
     BaseInlineFormSet,
     inlineformset_factory,
@@ -43,17 +45,25 @@ class BaseNestedFormset(BaseInlineFormSet):
         return result
 
 
-def nested_formset_factory(parent_model, child_model, grandchild_model):
+def nested_formset_factory(parent_model, child_model, grandchild_model,
+    child_max_num=None, child_extra=3, child_form=ModelForm,
+    grandchild_max_num=None, grandchild_extra=3, grandchild_form=ModelForm):
 
     parent_child = inlineformset_factory(
         parent_model,
         child_model,
         formset=BaseNestedFormset,
+        max_num=child_max_num,
+        extra=child_extra,
+        form=child_form,
     )
 
     parent_child.nested_formset_class = inlineformset_factory(
         child_model,
         grandchild_model,
+        max_num=grandchild_max_num,
+        extra=grandchild_extra,
+        form=grandchild_form,
     )
 
     return parent_child
